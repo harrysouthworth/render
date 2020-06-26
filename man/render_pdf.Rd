@@ -64,5 +64,8 @@ The function assumes your deepest heading is 5 or lower,
 The function replaces all instances of "# " with " ", the idea being
   that for section headings, or those that are written by cat statements,
   one hash is removed. This also means that any comments will need to be
-  started with more than one hash or they will be uncommented.
+  started with more than one hash or they will be uncommented. In principle
+  we should be able to use \code{rmarkdown::render(..., output_format = "all")}.
+  However, accurately picking up the output format seems to not always work
+  or be picked up by some of the other functions, such as \code{output_table}.
 }

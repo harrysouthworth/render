@@ -4,6 +4,7 @@
 #' @details If you use for loops to produce output in an Rmd file, you need to
 #'   explicitly print the outputs, and how that is done can depend on the
 #'   format.
+#' @export
 print.output_table <- function(x, format = theFormat){
   if (format == "word"){
     docx_value(x)
@@ -25,6 +26,11 @@ parahdr <- function(path){
   writeLines(txt, path)
 }
 
+#' Attempt to remove temporary files
+#' @param identifier String to search for filenames on.
+#' @param path String.
+#' @param ask Logical defaulting to \code{ask = FALSE}. If \code{ask = TRUE},
+#'   the function promtps the user with the filenames it has found.
 cleanup <- function(identifier, path, ask = FALSE){
   fns <- list.files(path)
   rfns <- fns[grepl(identifier, fns)]
@@ -44,19 +50,20 @@ cleanup <- function(identifier, path, ask = FALSE){
       out <- message("exiting")
     }
   } else {
-    invisible(out)
+    invisible()
   }
 }
 
 #' Create a table, depending on the type of output format
 #' @param x A data frame. If it is a matrix, it gets turned into a data frame.
 #' @param format Either "pdf", "html" or "word".
-#' @param digits Have a guess.
+#' @param digits,row.names,escape,align,font_size,full_width Passed through (or not)
+#'   to kable or flextable.
 #' @details It kind of works for html and pdf, not really tested for Word. It
 #'   is very limited in terms of the options available.
 #' @export
 output_table <- function(x, format = theFormat, digits = 3,
-                         row.names = TRUE,
+                         row.names = TRUE, escape = FALSE,
                          align = c("l", rep("r", ncol(x))),
                          ..., font_size = NULL, full_width = NULL){
   x <- as.data.frame(x)
@@ -67,7 +74,7 @@ output_table <- function(x, format = theFormat, digits = 3,
     x <- as.data.frame(x, stringsAsFactors = FALSE)
 
     res <- kable(x, format = "latex", align = align, row.names = row.names,
-          digits = digits, ...) %>%
+                 escape = escape, digits = digits, ...) %>%
       kable_styling(font_size = font_size, full_width = full_width)
   } else if (format == "word"){
     if (row.names){
@@ -84,9 +91,9 @@ output_table <- function(x, format = theFormat, digits = 3,
 
 # copied from stackoverflow
 fitFlextableToPage <- function(ft, pgwidth = 6){
-  ft_out <- ft %>% autofit()
+  ft_out <- ft %>% flextable::autofit()
 
-  ft_out <- width(ft_out, width = dim(ft_out)$widths*pgwidth /(flextable_dim(ft_out)$widths))
+  ft_out <- flextable::width(ft_out, width = dim(ft_out)$widths*pgwidth /(flextable::flextable_dim(ft_out)$widths))
   return(ft_out)
 }
 
@@ -105,6 +112,7 @@ gitcv <- function (){
 #'   much point putting the commit number in. Also, I can't figure out how to
 #'   make the font white.
 #' @param format A string, either "html", "pdf", or "word".
+#' @export
 printcv <- function(format = theFormat){
   wh <- gitcv()
   if (format == "html"){
@@ -120,4 +128,38 @@ printcv <- function(format = theFormat){
   }
 
   invisible()
+}
+
+#' Reduce subsections by 1 and remove some other guff
+#' @param infile String giving the name of the input file, without the path
+#'   and (optionally) without the file extension.
+#' @param herePath String to pass to \code{here::here} to get the correct path
+#'   to the directory containing the Rmd file.
+#' @param custom_removal Character vector giving strings to be replaced with
+#'   empty strings. Defaults to \code{custom_removal = NULL}.
+#' @export
+reduceSubsectioning <- function(infile, herePath = "Rmd/", custom_removal = NULL){
+  rnd <- paste(sample(c(0:9, letters, LETTERS), 9, replace = TRUE), collapse = "")
+
+  infile <- gsub(".Rmd", "", infile)
+  outfile <- paste0(infile, "_", rnd)
+
+  inf <- here(herePath, paste0(infile, ".Rmd"))
+  outf <- here(herePath, paste0(outfile, ".Rmd"))
+
+  rl <- readr::read_lines(inf)
+
+  rl <- gsub("\\{.tabset\\}", "", rl)
+  rl <- gsub("# ", " ", rl)
+
+  rl <- ifelse(substring(rl, 1, 4) == "<div", "", rl)
+
+  if (!is.null(custom_removal)){
+    for (i in 1:length(custom_removal)){
+      rl <- gsub(custom_removal[i], "", rl)
+    }
+  }
+
+  readr::write_lines(rl, outf)
+  outf
 }

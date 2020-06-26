@@ -24,8 +24,14 @@
 #' @note The function replaces all instances of "# " with " ", the idea being
 #'   that for section headings, or those that are written by cat statements,
 #'   one hash is removed. This also means that any comments will need to be
-#'   started with more than one hash or they will be uncommented.
+#'   started with more than one hash or they will be uncommented. In principle
+#'   we should be able to use \code{rmarkdown::render(..., output_format = "all")}.
+#'   However, accurately picking up the output format seems to not always work
+#'   or be picked up by some of the other functions, such as \code{output_table}.
 #' @aliases render_word
+#' @example theFormat <- "html"; render("Rmd/doc.Rmd")
+#'          theFormat <- "pdf"; render("Rmd/doc.Rmd")
+#'          theFormat <- "word"; render("Rmd/doc.Rmd)
 #' @export
 render_pdf <- function(infile, herePath = "Rmd/", keep = FALSE, render = TRUE,
                    output_file = NULL, keep_tex = FALSE,
@@ -33,8 +39,6 @@ render_pdf <- function(infile, herePath = "Rmd/", keep = FALSE, render = TRUE,
                    include = includes(in_header = "parahdr.tex"),
                    toc = TRUE, toc_depth = 3, number_sections = TRUE,
                    cleanup_ask = FALSE){
-  here <- here::here
-  rnd <- paste(sample(c(0:9, letters, LETTERS), 9, replace = TRUE), collapse = "")
 
   fnms <- list.files(here(herePath))
   if ("parahdr.tex" %in% fnms){
@@ -43,42 +47,19 @@ render_pdf <- function(infile, herePath = "Rmd/", keep = FALSE, render = TRUE,
   parahdr(here(herePath))
   on.exit(file.remove(here::here(herePath, "parahdr.tex")))
 
-
-  infile <- gsub(".Rmd", "", infile)
-  outfile <- paste0(infile, "_", rnd)
-
-  inf <- here(herePath, paste0(infile, ".Rmd"))
-  outf <- here(herePath, paste0(outfile, ".Rmd"))
-
-  rl <- readr::read_lines(inf)
-
-  rl <- gsub("\\{.tabset\\}", "", rl)
-  rl <- gsub("# ", " ", rl)
-  rl <- gsub("≥", ">=", rl)
-
-  rl <- ifelse(substring(rl, 1, 4) == "<div", "", rl)
-
-  if (!is.null(custom_removal)){
-    for (i in 1:length(custom_removal)){
-      rl <- gsub(custom_removal[i], "", rl)
-    }
-  }
-
-  readr::write_lines(rl, outf)
+  outf <- reduceSubsectioning(infile, herePath)
 
   if (!keep && !keep_tex){
-    on.exit(cleanup(rnd, path = here::here(herePath), ask = cleanup_ask), add = TRUE)
+    on.exit(cleanup(outf, path = here::here(herePath), ask = cleanup_ask), add = TRUE)
   }
 
-  if (render){
-    render(outf, output_format = pdf_document(toc = toc, toc_depth = toc_depth,
-                                              number_sections = number_sections,
-                                              includes = include, keep_tex = keep_tex,
-                                              extra_dependencies = c("float", "fancyhdr")),
-           output_file = output_file)
-    pdffile <- gsub("\\.Rmd", "\\.pdf", inf)
-    invisible(try(file.rename(gsub("\\.Rmd", "\\.pdf", outf), pdffile), silent = TRUE))
-  }
+  render(outf, output_format = pdf_document(toc = toc, toc_depth = toc_depth,
+                                            number_sections = number_sections,
+                                            includes = include, keep_tex = keep_tex,
+                                            extra_dependencies = c("float", "fancyhdr")),
+         output_file = output_file)
+  pdffile <- gsub("\\.Rmd", "\\.pdf", inf)
+  invisible(try(file.rename(gsub("\\.Rmd", "\\.pdf", outf), pdffile), silent = TRUE))
 
-  invisible(rl)
+  invisible(outf)
 }

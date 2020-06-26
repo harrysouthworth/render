@@ -9,6 +9,7 @@ output_table(
   format = theFormat,
   digits = 3,
   row.names = TRUE,
+  escape = FALSE,
   align = c("l", rep("r", ncol(x))),
   ...,
   font_size = NULL,
@@ -20,7 +21,8 @@ output_table(
 
 \item{format}{Either "pdf", "html" or "word".}
 
-\item{digits}{Have a guess.}
+\item{digits, row.names, escape, align, font_size, full_width}{Passed through (or not)
+to kable or flextable.}
 }
 \description{
 Create a table, depending on the type of output format

@@ -10,7 +10,7 @@ print.output_table <- function(x, format = theFormat){
     docx_value(x)
     cat("<w:p/>")
   } else {
-    print(x)
+    knitr:::print.knitr_kable(x)
   }
   invisible()
 }

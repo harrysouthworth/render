@@ -27,11 +27,18 @@ parahdr <- function(path){
 }
 
 #' Attempt to remove temporary files
-#' @param identifier String to search for filenames on.
-#' @param path String.
+#' @param outfile String to outfile, including the full path.
 #' @param ask Logical defaulting to \code{ask = FALSE}. If \code{ask = TRUE},
 #'   the function promtps the user with the filenames it has found.
-cleanup <- function(identifier, path, ask = FALSE){
+cleanup <- function(outfile, ask = FALSE){
+  s <- strsplit(outfile, "/")[[1]]
+  file <- s[length(s)]
+  path <- s[-length(s)]
+  path <- paste(path, collapse = "/")
+
+  identifier <- strsplit(file, "_")[[1]][2]
+  identifier <- substring(identifier, 1, nchar(identifier) - 4)
+
   fns <- list.files(path)
   rfns <- fns[grepl(identifier, fns)]
 

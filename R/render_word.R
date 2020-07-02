@@ -7,13 +7,14 @@ render_word <- function(infile, herePath = "Rmd/", keep = FALSE, render = TRUE,
   outf <- reduceSubsectioning(infile, herePath)
 
   if (!keep && !keep_tex){
-    on.exit(cleanup(outf, path = here::here(herePath), ask = cleanup_ask), add = TRUE)
+    on.exit(cleanup(outf, ask = cleanup_ask), add = TRUE)
   }
 
   render(outf, output_format = word_document(toc = toc, toc_depth = toc_depth),
          output_file = output_file)
-  docfile <- gsub("\\.Rmd", "\\.docx", outf)
-  invisible(try(file.rename(gsub("\\.Rmd", "\\.docx", outf), docfile), silent = TRUE))
+
+  docfile <- paste0(substring(outf, 1, nchar(outf) - 14), ".docx")
+  invisible(try(file.rename(gsub("\\.Rmd", "\\.pdf", outf), docfile), silent = TRUE))
 
   invisible(outf)
 }

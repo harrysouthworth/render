@@ -50,7 +50,7 @@ render_pdf <- function(infile, herePath = "Rmd/", keep = FALSE, render = TRUE,
   outf <- reduceSubsectioning(infile, herePath)
 
   if (!keep && !keep_tex){
-    on.exit(cleanup(outf, path = here::here(herePath), ask = cleanup_ask), add = TRUE)
+    on.exit(cleanup(outf, ask = cleanup_ask), add = TRUE)
   }
 
   render(outf, output_format = pdf_document(toc = toc, toc_depth = toc_depth,
@@ -58,7 +58,8 @@ render_pdf <- function(infile, herePath = "Rmd/", keep = FALSE, render = TRUE,
                                             includes = include, keep_tex = keep_tex,
                                             extra_dependencies = c("float", "fancyhdr")),
          output_file = output_file)
-  pdffile <- gsub("\\.Rmd", "\\.pdf", inf)
+
+  pdffile <- paste0(substring(outf, 1, nchar(outf) - 14), ".pdf")
   invisible(try(file.rename(gsub("\\.Rmd", "\\.pdf", outf), pdffile), silent = TRUE))
 
   invisible(outf)

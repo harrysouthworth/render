@@ -36,7 +36,8 @@ cleanup <- function(outfile, ask = FALSE){
   path <- s[-length(s)]
   path <- paste(path, collapse = "/")
 
-  identifier <- strsplit(file, "_")[[1]][2]
+  identifier <- strsplit(file, "_")[[1]]
+  identifier <- identifier[length(identifier)]
   identifier <- substring(identifier, 1, nchar(identifier) - 4)
 
   fns <- list.files(path)

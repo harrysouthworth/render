@@ -14,7 +14,7 @@ render_word <- function(infile, herePath = "Rmd/", keep = FALSE, render = TRUE,
          output_file = output_file)
 
   docfile <- paste0(substring(outf, 1, nchar(outf) - 14), ".docx")
-  invisible(try(file.rename(gsub("\\.Rmd", "\\.pdf", outf), docfile), silent = TRUE))
+  invisible(try(file.rename(gsub("\\.Rmd", "\\.docx", outf), docfile), silent = TRUE))
 
   invisible(outf)
 }

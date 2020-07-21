@@ -4,12 +4,10 @@
 \alias{cleanup}
 \title{Attempt to remove temporary files}
 \usage{
-cleanup(identifier, path, ask = FALSE)
+cleanup(outfile, ask = FALSE)
 }
 \arguments{
-\item{identifier}{String to search for filenames on.}
-
-\item{path}{String.}
+\item{outfile}{String to outfile, including the full path.}
 
 \item{ask}{Logical defaulting to \code{ask = FALSE}. If \code{ask = TRUE},
 the function promtps the user with the filenames it has found.}

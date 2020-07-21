@@ -10,7 +10,9 @@ fullSummary(
   domain = domain,
   test = test,
   arm = arm,
-  visit = visit
+  visit = visit,
+  ci = FALSE,
+  geometric = FALSE
 )
 }
 \arguments{
@@ -19,6 +21,12 @@ optionally containing columns for domain and test.}
 
 \item{value, domain, test, arm, visit}{Unquoted names of columns in \code{data}
 to be used in summarizing. They all default to their own names.}
+
+\item{ci}{Whether to report the 95% confidence interval for the mean or geometric
+mean. Defaults to \code{ci = FALSE}.}
+
+\item{geometric}{Whether to report the geometric rather than arithmetic mean (and
+confidence interval). Defaults to \code{geometrci = FALSE}.}
 }
 \value{
 A data frame.
@@ -33,6 +41,8 @@ Note
   to filter down to the correct visit and replace arm with a single value
   before calling this function. Also NOTE THAT you need to ensure BEFOREHAND that
   missing values are properly included (possibly via \code{dplyr::complete}).
+  The confidence interval is fixed (currently) at 95% and uses the Gaussian
+  approximation.
 }
 \note{
 In a sane world, you'd add another line to the pipeline and remove Mean

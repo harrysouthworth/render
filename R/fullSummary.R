@@ -77,7 +77,7 @@ fullSummary <- function (data, value = value, domain = domain, test = test,
                      Max. = max(value, na.rm = TRUE),
                      Mean = mean(value, na.rm = TRUE),
                      SD = sd(value, na.rm = TRUE),
-                     Gmean = exp(mean(log(value), na.rm = TRUE)),
+                     Gmean = ifelse(geometric, exp(mean(log(value), na.rm = TRUE)), 0),
                      Lo.95 = hilo(value, geometric, which = "lo"),
                      Hi.95 = hilo(value, geometric, which = "hi")) %>%
     as.data.frame(stringsAsFactors = FALSE)

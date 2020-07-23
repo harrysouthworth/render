@@ -25,8 +25,8 @@
 #'   However, dplyr is getting noiser about that, so I switched.
 #' @export
 fullSummary <- function (data, value = value, domain = domain, test = test,
-                         arm = arm, visit = visit, ci = FALSE, geometric = FALSE,
-                         zeros = NULL){
+                         arm = arm, visit = visit, ci = FALSE, alpha = .05,
+                         geometric = FALSE, zeros = NULL){
 
   value <- enquo(value)
   domain <- enquo(domain)
@@ -47,7 +47,7 @@ fullSummary <- function (data, value = value, domain = domain, test = test,
 
   zeros <- checkGeometric(data$value, geometric, zeros)
 
-  data <- doTransform(data, !!domain, !!test, geometric = geometric, zeros = zeros)
+  data <- doTransform(data, as_label(domain), as_label(test), geometric = geometric, zeros = zeros)
 
   res <- dplyr::group_by(data, !!domain, !!test, !!arm, !!visit) %>%
     dplyr::summarize(N = length(value), Missing = sum(is.na(value)),
@@ -58,9 +58,9 @@ fullSummary <- function (data, value = value, domain = domain, test = test,
                      Max. = max(value, na.rm = TRUE),
                      Mean = mean(value, na.rm = TRUE),
                      SD = sd(value, na.rm = TRUE),
-                     Gmean = hilo(..tvalue.., which = "mean"),
-                     Lo.95 = hilo(..tvalue.., which = "lo"),
-                     Hi.95 = hilo(..tvalue.., which = "hi")) %>%
+                     Gmean = hilo(..tvalue.., which = "mean", geometric, zeros, alpha),
+                     Lo = hilo(..tvalue.., which = "lo", geometric, zeros, alpha),
+                     Hi = hilo(..tvalue.., which = "hi", geometric, zeros, alpha)) %>%
     as.data.frame(stringsAsFactors = FALSE)
 
   if (geometric){
@@ -70,7 +70,7 @@ fullSummary <- function (data, value = value, domain = domain, test = test,
   }
 
   if (!ci){
-    res <- select(res, -Lo.95, -Hi.95)
+    res <- select(res, -Lo, -Hi)
   }
 
   res

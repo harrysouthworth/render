@@ -61,7 +61,7 @@ hilo <- function(x, which, g, z0, alpha = .05){
     res <- mean(x)
   } else if (which == "lo"){
     res <- mean(x) - se
-  } else {
+  } else if (which == "hi") {
     res <- mean(x) + se
   }
 

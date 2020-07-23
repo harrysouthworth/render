@@ -38,9 +38,10 @@ doTransform <- function(data, domain, test, geometric, zeros){
     as.data.frame()
 }
 
-hilo <- function(x, which, zeros){
+hilo <- function(x, which, g, z0, alpha = .05){
+  minx <- min(x)
   x <- x[!is.na(x) & x > -Inf]
-  z <- qnorm(.975)
+  z <- qnorm(1 - alpha / 2)
 
   se <- z * sqrt(stats::var(x)/length(x))
 
@@ -52,10 +53,10 @@ hilo <- function(x, which, zeros){
     res <- mean(x) + se
   }
 
-  if (geometric){
-    if (zeros == "add1"){
+  if (g){
+    if (z0 == "add1" & minx == -Inf){
       exp(res) - 1
-    } else if (zeros == "omit") {
+    } else if (z0 %in% c("add1", "omit")) {
       exp(res)
     }
   } else{

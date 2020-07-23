@@ -25,7 +25,8 @@
 #'   However, dplyr is getting noiser about that, so I switched.
 #' @export
 fullSummary <- function (data, value = value, domain = domain, test = test,
-                         arm = arm, visit = visit, ci = FALSE, geometric = FALSE){
+                         arm = arm, visit = visit, ci = FALSE, geometric = FALSE,
+                         zeros = NULL){
 
   value <- enquo(value)
   domain <- enquo(domain)
@@ -44,29 +45,9 @@ fullSummary <- function (data, value = value, domain = domain, test = test,
     data$value <- data[, quo_name(value)]
   }
 
-  hilo <- function(x, geom, which){
-    x <- x[!is.na(x)]
-    z <- qnorm(.975)
+  checkGeometric(data$value, geometric, zeros)
 
-    if (geom){
-      x <- log(x)
-    }
-
-    se <- z * sqrt(stats::var(x)/length(x))
-
-    if (which == "lo"){
-      res <- mean(x) - se
-    } else {
-      res <- mean(x) + se
-    }
-
-    if (geom){
-      exp(res)
-    } else {
-      res
-    }
-  }
-
+  data <- doTransform(data, !!domain, !!test, geometric = geometric, zeros = zeros)
 
   res <- dplyr::group_by(data, !!domain, !!test, !!arm, !!visit) %>%
     dplyr::summarize(N = length(value), Missing = sum(is.na(value)),
@@ -77,13 +58,13 @@ fullSummary <- function (data, value = value, domain = domain, test = test,
                      Max. = max(value, na.rm = TRUE),
                      Mean = mean(value, na.rm = TRUE),
                      SD = sd(value, na.rm = TRUE),
-                     Gmean = ifelse(geometric, exp(mean(log(value), na.rm = TRUE)), 0),
-                     Lo.95 = hilo(value, geometric, which = "lo"),
-                     Hi.95 = hilo(value, geometric, which = "hi")) %>%
+                     Gmean = hilo(..tvalue.., which = "mean"),
+                     Lo.95 = hilo(..tvalue.., which = "lo"),
+                     Hi.95 = hilo(..tvalue.., which = "hi")) %>%
     as.data.frame(stringsAsFactors = FALSE)
 
   if (geometric){
-    res <- select(res, -Mean)
+    res <- select(res, -Mean, -SD)
   } else {
     res <- select(res, -Gmean)
   }

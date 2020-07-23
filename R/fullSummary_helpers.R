@@ -8,34 +8,46 @@ checkGeometric <- function(x, geom, z){
       } else if (!(z %in% c("add1", "omit"))){
         stop("zeros should be one of 'add1' or 'omit'")
       }
+    } else { # min(x) > 0
+    z <- "omit"
     }
+  } else {
+    z <- "nothing"
   }
 
-  invisible()
+  z
 }
 
 doTransform <- function(data, domain, test, geometric, zeros){
-  if (is.null(zeros)){
-    zeros <- "bleargh"
-  }
-
   getTranny <- function(x){
     if (geometric){
       if (zeros == "add1"){
-        log1p(x)
-      } else if (zeros %in% c("bleargh", "omit")){
-        log(x)
+        if (min(x$value, na.rm = TRUE) == 0){
+          x$..tvalue.. <- log1p(x$value)
+        } else {
+          x$..tvalue.. <- log(x$value)
+        }
+      } else if (zeros == "omit"){
+        x$..tvalue.. <- log(x$value)
       } else {
         stop("you shouldn't be here!")
       }
     } else {
-      x
+      x$..tvalue.. <- x$value
     }
+
+    x
   }
 
-  group_by(data, domain, test) %>%
-    mutate(tvalue = getTranny(value)) %>%
-    as.data.frame()
+  data$..index.. <- 1:nrow(data)
+
+  s <- split(data, list(data[, domain], data[, test]))
+  s <- lapply(s, getTranny)
+
+  res <- as.data.frame(bind_rows(s))
+  res <- res[order(res$..index..), ]
+  res$..index.. <- NULL
+  res
 }
 
 hilo <- function(x, which, g, z0, alpha = .05){
@@ -54,12 +66,12 @@ hilo <- function(x, which, g, z0, alpha = .05){
   }
 
   if (g){
-    if (z0 == "add1" & minx == -Inf){
+    if (z0 == "add1"){
       exp(res) - 1
-    } else if (z0 %in% c("add1", "omit")) {
+    } else if (z0  == "omit") {
       exp(res)
     }
-  } else{
+  } else {
     res
   }
 }

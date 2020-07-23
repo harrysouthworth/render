@@ -45,7 +45,7 @@ fullSummary <- function (data, value = value, domain = domain, test = test,
     data$value <- data[, quo_name(value)]
   }
 
-  checkGeometric(data$value, geometric, zeros)
+  zeros <- checkGeometric(data$value, geometric, zeros)
 
   data <- doTransform(data, !!domain, !!test, geometric = geometric, zeros = zeros)
 

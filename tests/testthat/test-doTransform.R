@@ -6,28 +6,40 @@ test_that("doTransform works", {
     mutate(subject = paste0("subject", 1:48),
            value = rnorm(48))
 
+  dd <- dim(d) + c(0, 1)
+
   expect_error(doTransform(d, domain = "domain", test = "test"), label = "doTransform requires geometric argument")
-  expect_error(doTransform(d, domain = "domain", test = "test", geometric = FALSE), label = "doTransform requires zeros argument")
 
   tr <- doTransform(d, domain = "domain", test = "test", geometric = FALSE, zeros = NULL)
 
   expect_true(all(tr$value == tr$..tvalue..), label = "doTransform returns untransformed data when geometric is false")
+  expect_equal(dim(tr), dd, label = "output has same dimensions as input")
 
   # All values > 0
   d$value <- exp(d$value)
-  tr <- doTransform(d, domain = "domain", test = "test", geometric = TRUE, zeros = NULL)
-  expect_true(all(tr$value == tr$..tvalue..),
-              label = "doTransform returns log(value) if geometric is true and zeros is null, all > 0")
+
+  tr <- doTransform(d, domain = "domain", test = "test", geometric = TRUE, zeros = "add1")
+
+  expect_equal(dim(tr), dd, label = "output has same dimensions as input")
+  expect_true(all(tr$value == exp(tr$..tvalue..)),
+              label = "doTransform returns log(value) if geometric is true and zeros is null, all > 0, add1")
+
+  tr <- doTransform(d, domain = "domain", test = "test", geometric = TRUE, zeros = "omit")
+  expect_equal(dim(tr), dd, label = "output has same dimensions as input")
+  expect_true(all(tr$value == exp(tr$..tvalue..)),
+              label = "doTransform returns log(value) if geometric is true and zeros is null, all > 0, omit")
 
   # Include a zero: omit
   d$value[1] <- 0
   tr <- doTransform(d, domain = "domain", test = "test", geometric = TRUE, zeros = "omit")
+  expect_equal(dim(tr), dd, label = "output has same dimensions as input")
   expect_true(all(tr$..tvalue.. == log(d$value)),
               label = "doTransform returns logs if zeros = omit")
 
   # Include a zero: add1
   d$value[1] <- 0
   tr <- doTransform(d, domain = "domain", test = "test", geometric = TRUE, zeros = "add1")
+  expect_equal(dim(tr), dd, label = "output has same dimensions as input")
 
   s <- split(tr, tr$test)
 

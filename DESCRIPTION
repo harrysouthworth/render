@@ -5,7 +5,7 @@ Version: 0.3.0
 Author: Harry Southworth
 Maintainer: Harry Southworth <harry@dataclarityconsulting.co.uk>
 Description: Attempting to deal with issues caused by mixed markup.
-Depends: rmarkdown, kableExtra, tidyverse, here
+Depends: rmarkdown, kableExtra, tidyverse, here, flextable
 License: Proprietary
 Encoding: UTF-8
 LazyData: true

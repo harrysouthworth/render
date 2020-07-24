@@ -89,7 +89,13 @@ output_table <- function(x, format = theFormat, digits = 3,
       x <- cbind(rownames(x), x)
       names(x)[1] <- " "
     }
-    res <- fitFlextableToPage(flextable::flextable(as.data.frame(x), ...))
+    ft <- flextable::flextable(as.data.frame(x), ...)
+
+    nums <- sapply(as.data.frame(x), class) == "numeric"
+    nums <- (1:length(nums))[nums]
+
+    ft <- colformat_num(ft, digits = digits, j = nums)
+    res <- fitFlextableToPage(ft)
   } else {
     stop("output_format should be 'html', 'pdf' or 'word'")
   }

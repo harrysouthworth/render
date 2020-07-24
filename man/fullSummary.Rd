@@ -12,7 +12,9 @@ fullSummary(
   arm = arm,
   visit = visit,
   ci = FALSE,
-  geometric = FALSE
+  alpha = 0.05,
+  geometric = FALSE,
+  zeros = NULL
 )
 }
 \arguments{
@@ -27,6 +29,13 @@ mean. Defaults to \code{ci = FALSE}.}
 
 \item{geometric}{Whether to report the geometric rather than arithmetic mean (and
 confidence interval). Defaults to \code{geometrci = FALSE}.}
+
+\item{zeros}{If geometric means are required but the data contain 0s, the user
+needs to tell the function what to do: either \code{zeros = "add1"} will use
+\code{log1p} instead of \code{log}; \code{zeros = "omit"} will use the logs,
+omitting any -Inf values from the calculations. No default is provided because
+the user needs to know there 0s are there, and how to deal with them is
+arbitrary.}
 }
 \value{
 A data frame.

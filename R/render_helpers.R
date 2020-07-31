@@ -77,7 +77,8 @@ output_table <- function(x, format = theFormat, digits = 3,
   x <- as.data.frame(x)
 
   if (format == "html"){
-    res <- kable(x, digits = digits, row.names = row.names, ...) %>% kable_styling(font_size = font_size)
+    res <- kable(x, digits = digits, row.names = row.names, escape = escape, ...) %>%
+      kable_styling(font_size = font_size)
   } else if (format == "pdf") {
     x <- as.data.frame(x, stringsAsFactors = FALSE)
 
@@ -176,4 +177,35 @@ reduceSubsectioning <- function(infile, herePath = "Rmd/", custom_removal = NULL
 
   readr::write_lines(rl, outf)
   outf
+}
+
+#' Color the rows in an HTML table
+#' @param x A data frame.
+#' @param bgcolor Background color, defaulting to "yellow".
+#' @param color Font color, defaulting to "blue".
+#' @param rows Row indices to apply the colors to. Defaults to \code{ros = NULL}
+#'   and nothing is done.
+#' @param format String, either "html", "pdf" or "word". If not "html", nothing is done.
+#' @note The function colors the cells, not the rows (<tr> tags). It's not ideal,
+#'   but simple.
+colorows <- function(x, bgcolor = "yellow", color = "blue", rows = NULL, format = theFormat){
+  if (format != "html"){
+    x
+  }
+
+  if (!is.data.frame(x) & !is.matrix(x)){
+    stop("x should be a data.frame or a matrix")
+  }
+
+  if (is.null(rows)){
+    stop("rows is null so there's nothing to do")
+  }
+
+  x <- apply(x, 2, as.character, stringsAsFactors = FALSE) %>%
+    as.matrix() %>% t()
+
+  x[, rows] <- apply(x[, rows], 2,
+                     function(X) paste0("<span style='background-color: ", bgcolor, "; color: ", color, ";'>", X, "</span>"))
+
+  t(x)
 }

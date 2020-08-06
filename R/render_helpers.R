@@ -65,14 +65,17 @@ cleanup <- function(outfile, ask = FALSE){
 #' Create a table, depending on the type of output format
 #' @param x A data frame. If it is a matrix, it gets turned into a data frame.
 #' @param format Either "pdf", "html" or "word".
-#' @param digits,row.names,escape,align,font_size,full_width Passed through (or not)
-#'   to kable or flextable.
+#' @param digits,row.names,escape,align,font_size,full_width,longtable,booktabs Passed through (or not)
+#'   to kable or flextable, or not at all. They're named arguments because
+#'   passing them through as dots causes errors because \code{kable} and
+#'   \code{flextable} allow different things in via the dots.
 #' @details It kind of works for html and pdf, not really tested for Word. It
 #'   is very limited in terms of the options available.
 #' @export
 output_table <- function(x, format = theFormat, digits = 3,
                          row.names = TRUE, escape = FALSE,
                          align = c("l", rep("r", ncol(x))),
+                         longtable = FALSE, booktabs = FALSE,
                          ..., font_size = NULL, full_width = NULL){
   x <- as.data.frame(x)
 
@@ -83,7 +86,8 @@ output_table <- function(x, format = theFormat, digits = 3,
     x <- as.data.frame(x, stringsAsFactors = FALSE)
 
     res <- kable(x, format = "latex", align = align, row.names = row.names,
-                 escape = escape, digits = digits, ...) %>%
+                 escape = escape, digits = digits, longtable = longtable,
+                 booktabs = booktabs, ...) %>%
       kable_styling(font_size = font_size, full_width = full_width)
   } else if (format == "word"){
     if (row.names){

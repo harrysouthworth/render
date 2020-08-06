@@ -11,6 +11,8 @@ output_table(
   row.names = TRUE,
   escape = FALSE,
   align = c("l", rep("r", ncol(x))),
+  longtable = FALSE,
+  booktabs = FALSE,
   ...,
   font_size = NULL,
   full_width = NULL
@@ -21,8 +23,10 @@ output_table(
 
 \item{format}{Either "pdf", "html" or "word".}
 
-\item{digits, row.names, escape, align, font_size, full_width}{Passed through (or not)
-to kable or flextable.}
+\item{digits, row.names, escape, align, font_size, full_width, longtable, booktabs}{Passed through (or not)
+to kable or flextable, or not at all. They're named arguments because
+passing them through as dots causes errors because \code{kable} and
+\code{flextable} allow different things in via the dots.}
 }
 \description{
 Create a table, depending on the type of output format

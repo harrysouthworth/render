@@ -7,7 +7,7 @@
 #' @export
 print.output_table <- function(x, format = theFormat){
   if (format == "word"){
-    docx_value(x)
+    flextable::flextable_to_rmd(x)
     cat("<w:p/>")
   } else {
     knitr:::print.knitr_kable(x)
@@ -99,7 +99,9 @@ output_table <- function(x, format = theFormat, digits = 3,
     nums <- sapply(as.data.frame(x), class) == "numeric"
     nums <- (1:length(nums))[nums]
 
-    ft <- colformat_num(ft, digits = digits, j = nums)
+    if (length(nums) > 0){
+      ft <- colformat_num(ft, digits = digits, j = nums)
+    }
     res <- fitFlextableToPage(ft)
   } else {
     stop("output_format should be 'html', 'pdf' or 'word'")

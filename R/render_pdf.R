@@ -29,9 +29,9 @@
 #'   However, accurately picking up the output format seems to not always work
 #'   or be picked up by some of the other functions, such as \code{output_table}.
 #' @aliases render_word
-#' @example theFormat <- "html"; render("Rmd/doc.Rmd")
-#'          theFormat <- "pdf"; render("Rmd/doc.Rmd")
-#'          theFormat <- "word"; render("Rmd/doc.Rmd)
+#' @examples theFormat <- "html"; render("doc")
+#'          theFormat <- "pdf"; render("doc")
+#'          theFormat <- "word"; render("doc")
 #' @export
 render_pdf <- function(infile, herePath = "Rmd/", keep = FALSE, render = TRUE,
                    output_file = NULL, keep_tex = FALSE,

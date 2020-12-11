@@ -1,3 +1,5 @@
+format <- "html"
+
 #' Print table to HTML, PDF or Word from within a for loop
 #' @param x The output of \code{output_table}.
 #' @param format String: either "html", "pdf" or "word".
@@ -9,8 +11,12 @@ print.output_table <- function(x, format = theFormat){
   if (format == "word"){
     flextable::flextable_to_rmd(x)
     cat("<w:p/>")
-  } else {
+  } else if (format == "pdf") {
     knitr:::print.knitr_kable(x)
+  } else if (format == "html"){
+    cat(x)
+  } else {
+    stop("format should be 'html', 'pdf' or 'word'")
   }
   invisible()
 }

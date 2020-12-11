@@ -69,3 +69,8 @@ The function replaces all instances of "# " with " ", the idea being
   However, accurately picking up the output format seems to not always work
   or be picked up by some of the other functions, such as \code{output_table}.
 }
+\examples{
+theFormat <- "html"; render("doc")
+         theFormat <- "pdf"; render("doc")
+         theFormat <- "word"; render("doc")
+}

@@ -1,5 +1,3 @@
-format <- "html"
-
 #' Print table to HTML, PDF or Word from within a for loop
 #' @param x The output of \code{output_table}.
 #' @param format String: either "html", "pdf" or "word".
@@ -71,7 +69,7 @@ cleanup <- function(outfile, ask = FALSE){
 #' Create a table, depending on the type of output format
 #' @param x A data frame. If it is a matrix, it gets turned into a data frame.
 #' @param format Either "pdf", "html" or "word".
-#' @param digits,row.names,escape,align,font_size,full_width,longtable,booktabs Passed through (or not)
+#' @param digits,row.names,escape,align,font_size,full_width,longtable,booktabs,bootstrap_options Passed through (or not)
 #'   to kable or flextable, or not at all. They're named arguments because
 #'   passing them through as dots causes errors because \code{kable} and
 #'   \code{flextable} allow different things in via the dots.
@@ -82,19 +80,22 @@ output_table <- function(x, format = theFormat, digits = 3,
                          row.names = TRUE, escape = FALSE,
                          align = c("l", rep("r", ncol(x))),
                          longtable = FALSE, booktabs = FALSE,
+                         bootstrap_options = "hover",
                          ..., font_size = NULL, full_width = NULL){
   x <- as.data.frame(x)
 
   if (format == "html"){
     res <- kable(x, digits = digits, row.names = row.names, escape = escape, ...) %>%
-      kable_styling(font_size = font_size)
+      kable_styling(font_size = font_size,
+                    bootstrap_options = bootstrap_options)
   } else if (format == "pdf") {
     x <- as.data.frame(x, stringsAsFactors = FALSE)
 
     res <- kable(x, format = "latex", align = align, row.names = row.names,
                  escape = escape, digits = digits, longtable = longtable,
                  booktabs = booktabs, ...) %>%
-      kable_styling(font_size = font_size, full_width = full_width)
+      kable_styling(font_size = font_size, full_width = full_width,
+                    bootstrap_options = bootstrap_options)
   } else if (format == "word"){
     if (row.names){
       x <- cbind(rownames(x), x)

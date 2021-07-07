@@ -56,6 +56,8 @@ hilo <- function(x, which, g, z0, alpha = .05){
   z <- qnorm(1 - alpha / 2)
 
   se <- z * sqrt(stats::var(x)/length(x))
+  testStat <- mean(x) / se
+  p <- 2 * pnorm(testStat, lower.tail = FALSE)
 
   if (which == "mean"){
     res <- mean(x)
@@ -63,6 +65,8 @@ hilo <- function(x, which, g, z0, alpha = .05){
     res <- mean(x) - se
   } else if (which == "hi") {
     res <- mean(x) + se
+  } else if (which == "p-value"){
+    res <- p
   }
 
   if (g){

@@ -5,6 +5,9 @@
 #'   to be used in summarizing. They all default to their own names.
 #' @param ci Whether to report the 95% confidence interval for the mean or geometric
 #'   mean. Defaults to \code{ci = FALSE}.
+#' @param pvalue Whether to report the p-value for the mean being different from
+#'   zero. Almost always, this will be purely descriptive because comparison
+#'   to baseline is not the point of a clinical trial.
 #' @param geometric Whether to report the geometric rather than arithmetic mean (and
 #'   confidence interval). Defaults to \code{geometrci = FALSE}.
 #' @param zeros If geometric means are required but the data contain 0s, the user
@@ -28,11 +31,14 @@
 #' @note In a sane world, you'd add another line to the pipeline and remove Mean
 #'   and SD. Also, I ought to write kable and formattable methods. Earlier
 #'   versions (prior to 2019-05-22) used strings as all arguments but the first.
-#'   However, dplyr is getting noiser about that, so I switched.
+#'   However, dplyr is getting noiser about that, so I switched. I've added
+#'   computation of intervals and p-values: I don't like it, but keep getting
+#'   asked and it's better to build it in so that it can be properly tested,
+#'   rather than do it on the fly and risk making mistakes.
 #' @export
 fullSummary <- function (data, value = value, domain = domain, test = test,
-                         arm = arm, visit = visit, ci = FALSE, alpha = .05,
-                         geometric = FALSE, zeros = NULL){
+                         arm = arm, visit = visit, ci = FALSE, pvalue = FALSE,
+                         approx = "t", alpha = .05, geometric = FALSE, zeros = NULL){
 
   value <- enquo(value)
   domain <- enquo(domain)
@@ -53,7 +59,9 @@ fullSummary <- function (data, value = value, domain = domain, test = test,
 
   zeros <- checkGeometric(data$value, geometric, zeros)
 
-  data <- doTransform(data, as_label(domain), as_label(test), geometric = geometric, zeros = zeros)
+  data <- doTransform(data, as_label(domain), as_label(test),
+                      as_label(arm), as_label(visit),
+                      geometric = geometric, zeros = zeros)
 
   res <- dplyr::group_by(data, !!domain, !!test, !!arm, !!visit) %>%
     dplyr::summarize(N = length(value), Missing = sum(is.na(value)),
@@ -64,9 +72,10 @@ fullSummary <- function (data, value = value, domain = domain, test = test,
                      Max. = max(value, na.rm = TRUE),
                      Mean = mean(value, na.rm = TRUE),
                      SD = sd(value, na.rm = TRUE),
-                     Gmean = hilo(..tvalue.., which = "mean", geometric, zeros, alpha),
-                     Lo = hilo(..tvalue.., which = "lo", geometric, zeros, alpha),
-                     Hi = hilo(..tvalue.., which = "hi", geometric, zeros, alpha)) %>%
+                     Gmean = hilo(..tvalue.., which = "mean", geometric, zeros, alpha, approx),
+                     Lo = hilo(..tvalue.., which = "lo", geometric, zeros, alpha, approx),
+                     Hi = hilo(..tvalue.., which = "hi", geometric, zeros, alpha, approx),
+                     `p-value` = hilo(..tvalue.., which = "p-value", geometric, zeros, alpha, approx)) %>%
     as.data.frame(stringsAsFactors = FALSE)
 
   if (geometric){
@@ -77,6 +86,10 @@ fullSummary <- function (data, value = value, domain = domain, test = test,
 
   if (!ci){
     res <- select(res, -Lo, -Hi)
+  }
+
+  if (!pvalue){
+    res <- select(res, -`p-value`)
   }
 
   res

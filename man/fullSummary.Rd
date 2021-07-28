@@ -12,6 +12,8 @@ fullSummary(
   arm = arm,
   visit = visit,
   ci = FALSE,
+  pvalue = FALSE,
+  approx = "t",
   alpha = 0.05,
   geometric = FALSE,
   zeros = NULL
@@ -26,6 +28,10 @@ to be used in summarizing. They all default to their own names.}
 
 \item{ci}{Whether to report the 95% confidence interval for the mean or geometric
 mean. Defaults to \code{ci = FALSE}.}
+
+\item{pvalue}{Whether to report the p-value for the mean being different from
+zero. Almost always, this will be purely descriptive because comparison
+to baseline is not the point of a clinical trial.}
 
 \item{geometric}{Whether to report the geometric rather than arithmetic mean (and
 confidence interval). Defaults to \code{geometrci = FALSE}.}
@@ -57,5 +63,8 @@ Note
 In a sane world, you'd add another line to the pipeline and remove Mean
   and SD. Also, I ought to write kable and formattable methods. Earlier
   versions (prior to 2019-05-22) used strings as all arguments but the first.
-  However, dplyr is getting noiser about that, so I switched.
+  However, dplyr is getting noiser about that, so I switched. I've added
+  computation of intervals and p-values: I don't like it, but keep getting
+  asked and it's better to build it in so that it can be properly tested,
+  rather than do it on the fly and risk making mistakes.
 }

@@ -18,7 +18,7 @@ checkGeometric <- function(x, geom, z){
   z
 }
 
-doTransform <- function(data, domain, test, geometric, zeros){
+doTransform <- function(data, domain, test, arm, visit,geometric, zeros){
   getTranny <- function(x){
     if (geometric){
       if (zeros == "add1"){
@@ -50,21 +50,28 @@ doTransform <- function(data, domain, test, geometric, zeros){
   res
 }
 
-hilo <- function(x, which, g, z0, alpha = .05){
-  minx <- min(x)
+hilo <- function(x, which, g, z0, alpha = .05, approx = "t"){
   x <- x[!is.na(x) & x > -Inf]
-  z <- qnorm(1 - alpha / 2)
+  if (approx == "z"){
+    z <- qnorm(1 - alpha / 2)
+  } else if (approx == "t"){
+    z <- qt(1 - alpha / 2, df = length(x) - 1)
+  }
 
-  se <- z * sqrt(stats::var(x)/length(x))
+  se <- sqrt(stats::var(x)/length(x))
   testStat <- mean(x) / se
-  p <- 2 * pnorm(testStat, lower.tail = FALSE)
+  if (approx == "z"){
+    p <- 2 * pnorm(abs(testStat), lower.tail = FALSE)
+  } else if (approx == "t"){
+    p <- 2 * pt(abs(testStat), df = length(x) - 1, lower.tail = FALSE)
+  }
 
   if (which == "mean"){
     res <- mean(x)
   } else if (which == "lo"){
-    res <- mean(x) - se
+    res <- mean(x) - se * z
   } else if (which == "hi") {
-    res <- mean(x) + se
+    res <- mean(x) + se * z
   } else if (which == "p-value"){
     res <- p
   }

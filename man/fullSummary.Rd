@@ -13,6 +13,7 @@ fullSummary(
   visit = visit,
   ci = FALSE,
   pvalue = FALSE,
+  pvalue.digits = 4,
   approx = "t",
   alpha = 0.05,
   geometric = FALSE,
@@ -32,6 +33,10 @@ mean. Defaults to \code{ci = FALSE}.}
 \item{pvalue}{Whether to report the p-value for the mean being different from
 zero. Almost always, this will be purely descriptive because comparison
 to baseline is not the point of a clinical trial.}
+
+\item{pvalue.digits}{The number of decimal places at which to round and format
+p-values. Defaults to \code{pvalue.digits = 4}. To avoid formatting, specify
+\code{pvalue.digts = NULL}.}
 
 \item{geometric}{Whether to report the geometric rather than arithmetic mean (and
 confidence interval). Defaults to \code{geometrci = FALSE}.}

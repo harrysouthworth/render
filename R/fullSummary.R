@@ -8,6 +8,9 @@
 #' @param pvalue Whether to report the p-value for the mean being different from
 #'   zero. Almost always, this will be purely descriptive because comparison
 #'   to baseline is not the point of a clinical trial.
+#' @param pvalue.digits The number of decimal places at which to round and format
+#'   p-values. Defaults to \code{pvalue.digits = 4}. To avoid formatting, specify
+#'   \code{pvalue.digts = NULL}.
 #' @param geometric Whether to report the geometric rather than arithmetic mean (and
 #'   confidence interval). Defaults to \code{geometrci = FALSE}.
 #' @param zeros If geometric means are required but the data contain 0s, the user
@@ -38,6 +41,7 @@
 #' @export
 fullSummary <- function (data, value = value, domain = domain, test = test,
                          arm = arm, visit = visit, ci = FALSE, pvalue = FALSE,
+                         pvalue.digits = 4,
                          approx = "t", alpha = .05, geometric = FALSE, zeros = NULL){
 
   value <- enquo(value)
@@ -90,6 +94,10 @@ fullSummary <- function (data, value = value, domain = domain, test = test,
 
   if (!pvalue){
     res <- select(res, -`p-value`)
+  } else if (!is.null(pvalue.digits)){
+    lts <- paste0("<", 10^(-pvalue.digits))
+    fmt <- paste0("%.", pvalue.digits, "f")
+    res <- mutate(res, `p-value` = ifelse(`p-value` < 10^(-pvalue.digits), lts, sprintf(fmt, `p-value`)))
   }
 
   res

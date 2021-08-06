@@ -55,7 +55,11 @@ hilo <- function(x, which, g, z0, alpha = .05, approx = "t"){
   if (approx == "z"){
     z <- qnorm(1 - alpha / 2)
   } else if (approx == "t"){
-    z <- qt(1 - alpha / 2, df = length(x) - 1)
+    if (length(x) > 1){
+      z <- qt(1 - alpha / 2, df = length(x) - 1)
+    } else {
+      z <- 0
+    }
   }
 
   se <- sqrt(stats::var(x)/length(x))
@@ -63,7 +67,11 @@ hilo <- function(x, which, g, z0, alpha = .05, approx = "t"){
   if (approx == "z"){
     p <- 2 * pnorm(abs(testStat), lower.tail = FALSE)
   } else if (approx == "t"){
-    p <- 2 * pt(abs(testStat), df = length(x) - 1, lower.tail = FALSE)
+    if (length(x) > 1){
+      p <- 2 * pt(abs(testStat), df = length(x) - 1, lower.tail = FALSE)
+    } else {
+      p <- 1
+    }
   }
 
   if (which == "mean"){

@@ -85,7 +85,8 @@ output_table <- function(x, format = theFormat, digits = 3,
   x <- as.data.frame(x)
 
   if (format == "html"){
-    res <- kable(x, digits = digits, row.names = row.names, escape = escape, ...) %>%
+    res <- kable(x, digits = digits, row.names = row.names, escape = escape,
+                 align = align, ...) %>%
       kable_styling(font_size = font_size,
                     bootstrap_options = bootstrap_options)
   } else if (format == "pdf") {

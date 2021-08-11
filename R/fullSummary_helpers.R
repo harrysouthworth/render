@@ -64,6 +64,7 @@ hilo <- function(x, which, g, z0, alpha = .05, approx = "t"){
 
   se <- sqrt(stats::var(x)/length(x))
   testStat <- mean(x) / se
+
   if (approx == "z"){
     p <- 2 * pnorm(abs(testStat), lower.tail = FALSE)
   } else if (approx == "t"){
@@ -73,6 +74,7 @@ hilo <- function(x, which, g, z0, alpha = .05, approx = "t"){
       p <- 1
     }
   }
+
 
   if (which == "mean"){
     res <- mean(x)
@@ -84,9 +86,9 @@ hilo <- function(x, which, g, z0, alpha = .05, approx = "t"){
     res <- p
   }
 
-  if (g){
+  if (g & which != "p-value"){
     if (z0 == "add1"){
-      exp(res) - 1
+      expm1(res)
     } else if (z0  == "omit") {
       exp(res)
     }

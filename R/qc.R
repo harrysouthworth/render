@@ -14,3 +14,12 @@ qc <- function(data, id = "subject"){
 
   invisible()
 }
+
+#' Shortcut to converting tibbles to data frames
+#' @param data A data frame
+#' @details I'm sick of having to convert tibbles that hide columns back to
+#'   something that doesn't cause unnecessary errors and bugs.
+#' @export
+afdf <- function(data){
+  as.data.frame(data)
+}

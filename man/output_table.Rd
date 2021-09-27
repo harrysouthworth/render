@@ -14,6 +14,7 @@ output_table(
   longtable = FALSE,
   booktabs = FALSE,
   bootstrap_options = "hover",
+  caption = NULL,
   ...,
   font_size = NULL,
   full_width = NULL
@@ -24,7 +25,7 @@ output_table(
 
 \item{format}{Either "pdf", "html" or "word".}
 
-\item{digits, row.names, escape, align, font_size, full_width, longtable, booktabs, bootstrap_options}{Passed through (or not)
+\item{digits, row.names, escape, align, font_size, full_width, longtable, booktabs, bootstrap_options, caption}{Passed through (or not)
 to kable or flextable, or not at all. They're named arguments because
 passing them through as dots causes errors because \code{kable} and
 \code{flextable} allow different things in via the dots.}

@@ -69,7 +69,7 @@ cleanup <- function(outfile, ask = FALSE){
 #' Create a table, depending on the type of output format
 #' @param x A data frame. If it is a matrix, it gets turned into a data frame.
 #' @param format Either "pdf", "html" or "word".
-#' @param digits,row.names,escape,align,font_size,full_width,longtable,booktabs,bootstrap_options Passed through (or not)
+#' @param digits,row.names,escape,align,font_size,full_width,longtable,booktabs,bootstrap_options,caption Passed through (or not)
 #'   to kable or flextable, or not at all. They're named arguments because
 #'   passing them through as dots causes errors because \code{kable} and
 #'   \code{flextable} allow different things in via the dots.
@@ -81,12 +81,13 @@ output_table <- function(x, format = theFormat, digits = 3,
                          align = c("l", rep("r", ncol(x))),
                          longtable = FALSE, booktabs = FALSE,
                          bootstrap_options = "hover",
+                         caption = NULL,
                          ..., font_size = NULL, full_width = NULL){
   x <- as.data.frame(x)
 
   if (format == "html"){
     res <- kable(x, digits = digits, row.names = row.names, escape = escape,
-                 align = align, ...) %>%
+                 align = align, caption, ...) %>%
       kable_styling(font_size = font_size,
                     bootstrap_options = bootstrap_options)
   } else if (format == "pdf") {
@@ -94,7 +95,7 @@ output_table <- function(x, format = theFormat, digits = 3,
 
     res <- kable(x, format = "latex", align = align, row.names = row.names,
                  escape = escape, digits = digits, longtable = longtable,
-                 booktabs = booktabs, ...) %>%
+                 booktabs = booktabs, caption, ...) %>%
       kable_styling(font_size = font_size, full_width = full_width,
                     bootstrap_options = bootstrap_options)
   } else if (format == "word"){
@@ -103,6 +104,10 @@ output_table <- function(x, format = theFormat, digits = 3,
       names(x)[1] <- " "
     }
     ft <- flextable::flextable(as.data.frame(x), ...)
+
+    if (!is.null(caption)){
+      ft <- set_caption(ft, caption = caption)
+    }
 
     nums <- sapply(as.data.frame(x), class) == "numeric"
     nums <- (1:length(nums))[nums]

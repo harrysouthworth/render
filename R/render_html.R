@@ -7,7 +7,7 @@
 #' @export
 render_html <- function(infile, herePath = "Rmd/", output_file = NULL){
   infile <- gsub(".Rmd", "", infile)
-  inf <- paste0(here(herePath), infile, ".Rmd")
+  inf <- paste0(here::here(herePath), infile, ".Rmd")
   render(inf, output_format = html_document(anchor_sections = FALSE),
          output_file = output_file)
 }

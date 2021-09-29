@@ -95,7 +95,7 @@ output_table <- function(x, format = theFormat, digits = 3,
 
     res <- kable(x, format = "latex", align = align, row.names = row.names,
                  escape = escape, digits = digits, longtable = longtable,
-                 booktabs = booktabs, caption, ...) %>%
+                 booktabs = booktabs, caption, col.names = NA, ...) %>%
       kable_styling(font_size = font_size, full_width = full_width,
                     bootstrap_options = bootstrap_options)
   } else if (format == "word"){

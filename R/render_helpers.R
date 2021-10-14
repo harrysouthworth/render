@@ -83,6 +83,7 @@ output_table <- function(x, format = theFormat, digits = 3,
                          bootstrap_options = "hover",
                          caption = NULL,
                          latex_options = "repeat_header",
+                         linesep = c(rep("", 4), "\\linespace"),
                          ..., font_size = NULL, full_width = NULL){
   x <- as.data.frame(x)
 
@@ -97,7 +98,8 @@ output_table <- function(x, format = theFormat, digits = 3,
     res <- kable(x, format = "latex",
                  align = align, row.names = row.names,
                  escape = escape, digits = digits, longtable = longtable,
-                 booktabs = booktabs, caption = caption, col.names = NA) %>%
+                 booktabs = booktabs, caption = caption, col.names = NA,
+                 linesep = linesep) %>%
       kable_styling(font_size = font_size, full_width = full_width,
                     bootstrap_options = bootstrap_options)
   } else if (format == "word"){

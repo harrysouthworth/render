@@ -82,6 +82,7 @@ output_table <- function(x, format = theFormat, digits = 3,
                          longtable = FALSE, booktabs = FALSE,
                          bootstrap_options = "hover",
                          caption = NULL,
+                         latex_options = "repeat_header",
                          ..., font_size = NULL, full_width = NULL){
   x <- as.data.frame(x)
 
@@ -93,9 +94,10 @@ output_table <- function(x, format = theFormat, digits = 3,
   } else if (format == "pdf") {
     x <- as.data.frame(x, stringsAsFactors = FALSE)
 
-    res <- kable(x, format = "latex", align = align, row.names = row.names,
+    res <- kable(x, format = "latex",
+                 align = align, row.names = row.names,
                  escape = escape, digits = digits, longtable = longtable,
-                 booktabs = booktabs, caption = caption, col.names = NA, ...) %>%
+                 booktabs = booktabs, caption = caption, col.names = NA) %>%
       kable_styling(font_size = font_size, full_width = full_width,
                     bootstrap_options = bootstrap_options)
   } else if (format == "word"){

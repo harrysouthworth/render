@@ -83,7 +83,7 @@ output_table <- function(x, format = theFormat, digits = 3,
                          bootstrap_options = "hover",
                          caption = NULL,
                          latex_options = "repeat_header",
-                         linesep = c(rep("", 4), "\\linespace"),
+                         linesep = "", ##c(rep("", 4), "\\linespace"),
                          ..., font_size = NULL, full_width = NULL){
   x <- as.data.frame(x)
 

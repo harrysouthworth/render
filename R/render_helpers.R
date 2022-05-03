@@ -9,7 +9,7 @@ print.output_table <- function(x, format = theFormat){
   if (format == "word"){
     flextable::flextable_to_rmd(x)
     cat("<w:p/>")
-  } else if (format == "pdf") {
+  } else if (format == "pdf" | format == "rtf") {
     knitr:::print.knitr_kable(x)
   } else if (format == "html"){
     cat(x)
@@ -92,7 +92,7 @@ output_table <- function(x, format = theFormat, digits = 3,
                  align = align, caption = caption, ...) %>%
       kable_styling(font_size = font_size,
                     bootstrap_options = bootstrap_options)
-  } else if (format == "pdf") {
+  } else if (format == "pdf" | format == "rtf") {
     x <- as.data.frame(x, stringsAsFactors = FALSE)
 
     res <- kable(x, format = "latex",

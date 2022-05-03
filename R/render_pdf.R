@@ -48,7 +48,6 @@ render_pdf <- function(infile, herePath = "Rmd/", keep = FALSE, render = TRUE,
   on.exit(file.remove(here::here(herePath, "parahdr.tex")))
 
   outf <- reduceSubsectioning(infile, herePath)
-  #outf <- gsub("%", "\\\\%", outf)
 
   if (!keep && !keep_tex){
     on.exit(cleanup(outf, ask = cleanup_ask), add = TRUE)
@@ -61,7 +60,7 @@ render_pdf <- function(infile, herePath = "Rmd/", keep = FALSE, render = TRUE,
          output_file = output_file)
 
   pdffile <- paste0(substring(outf, 1, nchar(outf) - 14), ".pdf")
-  invisible(try(file.rename(gsub("\\.Rmd", "\\.pdf", outf), pdffile), silent = TRUE))
+  invisible(suppressWarnings(try(file.rename(gsub("\\.Rmd", "\\.pdf", outf), pdffile, showWarnings = FALSE), silent = TRUE)))
 
   invisible(outf)
 }

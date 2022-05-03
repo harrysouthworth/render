@@ -1,12 +1,12 @@
 Package: render
 Type: Package
 Title: Attempt to smooth the process of rendering rmarkdown into multiple formats
-Version: 0.4.4
+Version: 0.4.5
 Author: Harry Southworth
 Maintainer: Harry Southworth <harry@dataclarityconsulting.co.uk>
 Description: Attempting to deal with issues caused by mixed markup.
 Depends: rmarkdown, kableExtra, tidyverse, here, flextable
-License: Proprietary
+License: GLP2
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1

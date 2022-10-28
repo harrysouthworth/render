@@ -10,7 +10,7 @@ qc <- function(data, id = "subject"){
   ff1 <- tinytest::expect_equal(nrow(data), length(unique(s)), info = "One row per ID")
   ff2 <- tinytest::expect_true(nrow(data) > 0, info = "Data has rows in it")
 
-  expect_true(all(ff1, ff2))
+  tinytest::expect_true(all(ff1, ff2))
 }
 
 #' Shortcut to converting tibbles to data frames

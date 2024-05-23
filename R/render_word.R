@@ -1,3 +1,4 @@
+#' @export
 render_word <- function(infile, herePath = "Rmd/", keep = FALSE, render = TRUE,
                        output_file = NULL, keep_tex = FALSE,
                        custom_removal = NULL,

@@ -15,6 +15,8 @@ output_table(
   booktabs = FALSE,
   bootstrap_options = "hover",
   caption = NULL,
+  latex_options = "repeat_header",
+  linesep = "",
   ...,
   font_size = NULL,
   full_width = NULL
